@@ -1,23 +1,60 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Panel Principal</title>
+    <title>Formulario Unificado - Wazuh Reports</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Panel Principal - Wazuh Reports</h1>
-    <p>Bienvenido, {{ usuario }} (Rol: {{ role }})</p>
+    <h1>Formulario de Carga de Datos</h1>
 
-    <ul>
-        <li><a href="{{ url_for('upload_csv', categoria='usuarios_fallidos') }}">Usuarios con Conexiones Fallidas</a></li>
-        <li><a href="{{ url_for('upload_csv', categoria='ips_fallidas') }}">Conexiones Fallidas por IP</a></li>
-        <li><a href="{{ url_for('upload_csv', categoria='bloqueos_usuarios') }}">Bloqueos de Active Response (Usuarios)</a></li>
-        <li><a href="{{ url_for('upload_csv', categoria='bloqueos_ips') }}">Bloqueos de Active Response (IPs)</a></li>
-        <li><a href="{{ url_for('upload_csv', categoria='usuarios_creados') }}">Usuarios Creados en los Servidores</a></li>
-    </ul>
+    <!-- Mostrar mensajes flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul>
+          {% for category, msg in messages %}
+            <li style="color: {% if category=='error' %}red{% else %}green{% endif %};">
+              {{ msg }}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
 
-    <p><a href="{{ url_for('reporte') }}">Ver/Generar Reporte</a></p>
-    <p><a href="{{ url_for('logout') }}">Cerrar Sesión</a></p>
+    <form method="POST" enctype="multipart/form-data">
+        <div style="border:1px solid #ccc; margin:10px; padding:10px;">
+            <h3>Usuarios con Conexiones Fallidas</h3>
+            <input type="file" name="usuarios_fallidos_csv" accept=".csv" />
+        </div>
+
+        <div style="border:1px solid #ccc; margin:10px; padding:10px;">
+            <h3>Conexiones Fallidas por IP</h3>
+            <input type="file" name="ips_fallidas_csv" accept=".csv" />
+        </div>
+
+        <div style="border:1px solid #ccc; margin:10px; padding:10px;">
+            <h3>Bloqueos de Active Response (Usuarios)</h3>
+            <input type="file" name="bloqueos_usuarios_csv" accept=".csv" />
+        </div>
+
+        <div style="border:1px solid #ccc; margin:10px; padding:10px;">
+            <h3>Bloqueos de Active Response (IPs)</h3>
+            <input type="file" name="bloqueos_ips_csv" accept=".csv" />
+        </div>
+
+        <div style="border:1px solid #ccc; margin:10px; padding:10px;">
+            <h3>Usuarios Creados en los Servidores</h3>
+            <input type="file" name="usuarios_creados_csv" accept=".csv" />
+        </div>
+
+        <div style="margin:10px; padding:10px;">
+            <label for="comment_field"><strong>Comentarios adicionales:</strong></label><br/>
+            <textarea name="comment_field" rows="4" cols="50" placeholder="Opcional..."></textarea>
+        </div>
+
+        <button type="submit">Enviar Datos</button>
+    </form>
+
+    <p><a href="{{ url_for('reporte') }}">Ver Reporte</a> | <a href="{{ url_for('logout') }}">Cerrar Sesión</a></p>
 </body>
 </html>

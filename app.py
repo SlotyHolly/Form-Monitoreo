@@ -131,33 +131,12 @@ class CreatedUser(db.Model):
 # -----------------------------------------------------------------------------
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return User.query.filter_by(id=user_id).first()
 
 
 # -----------------------------------------------------------------------------
-# RUTAS DE REGISTRO/LOGIN/LOGOUT
+# RUTAS DE LOGIN/LOGOUT
 # -----------------------------------------------------------------------------
-
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-        role = request.form.get("role", "operador")
-
-        # Validar que no exista ya el usuario
-        if User.query.filter_by(username=username).first():
-            flash("El usuario ya existe.", "error")
-            return render_template("register.html")
-
-        new_user = User(username=username, role=role)
-        new_user.set_password(password)
-        db.session.add(new_user)
-        db.session.commit()
-
-        flash("Usuario registrado exitosamente.", "success")
-        return redirect(url_for("login"))
-    return render_template("register.html")
 
 @app.route("/", methods=["GET", "POST"])
 def login():
@@ -342,6 +321,9 @@ def reporte():
         bip_data = BlockedIP.query.filter_by(created_by=current_user.id).all()
         cu_data = CreatedUser.query.filter_by(created_by=current_user.id).all()
 
+    # Opcional: mostrar los últimos comentarios registrados por el usuario
+    user_comments = FormComment.query.filter_by(user_id=current_user.id).order_by(FormComment.created_at.desc()).limit(5).all()
+
     # Convertimos a DataFrames para mostrar en tablas
     df_fc = pd.DataFrame([{
         "Usuario": x.usuario,
@@ -396,7 +378,8 @@ def reporte():
         "report.html",
         fecha_reporte=fecha_reporte,
         responsable=responsable,
-        tablas=tablas
+        tablas=tablas,
+        user_comments=user_comments
     )
 
 
