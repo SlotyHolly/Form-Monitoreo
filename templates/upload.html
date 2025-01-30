@@ -1,27 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Carga de CSV</title>
 </head>
 <body>
-    <h1>Subir CSV para la categoría: {{ categoria }}</h1>
-    {% if error %}
-        <p style="color: red;">{{ error }}</p>
-    {% endif %}
-    {% if success %}
-        <p style="color: green;">{{ success }}</p>
-    {% endif %}
+    <h1>Subir CSV: {{ categoria }}</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul>
+          {% for category, message in messages %}
+            <li style="color: {% if category=='error' %}red{% else %}green{% endif %};">
+              {{ message }}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
 
     <form method="POST" enctype="multipart/form-data">
-        <label for="csv_file">Archivo CSV:</label>
-        <input type="file" name="csv_file" accept=".csv"><br><br>
+        <label>Archivo CSV:</label>
+        <input type="file" name="csv_file" accept=".csv" required>
         <button type="submit">Subir</button>
     </form>
-
-    {% if df_preview %}
-        <h3>Vista previa de los primeros registros:</h3>
-        {{ df_preview|safe }}
-    {% endif %}
 
     <p><a href="{{ url_for('index') }}">Volver al Menú</a></p>
 </body>

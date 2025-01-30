@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Panel Principal</title>
 </head>
 <body>
-    <h1>Bienvenido, {{ usuario }}</h1>
-    <p>Selecciona una categoría para cargar CSV:</p>
+    <h1>Panel Principal - Wazuh Reports</h1>
+    <p>Bienvenido, {{ usuario }} (Rol: {{ role }})</p>
+
     <ul>
         <li><a href="{{ url_for('upload_csv', categoria='usuarios_fallidos') }}">Usuarios con Conexiones Fallidas</a></li>
         <li><a href="{{ url_for('upload_csv', categoria='ips_fallidas') }}">Conexiones Fallidas por IP</a></li>
@@ -14,6 +16,7 @@
         <li><a href="{{ url_for('upload_csv', categoria='usuarios_creados') }}">Usuarios Creados en los Servidores</a></li>
     </ul>
 
-    <p><a href="{{ url_for('reporte') }}">Ver/Generar Reporte Final</a></p>
+    <p><a href="{{ url_for('reporte') }}">Ver/Generar Reporte</a></p>
+    <p><a href="{{ url_for('logout') }}">Cerrar Sesión</a></p>
 </body>
 </html>

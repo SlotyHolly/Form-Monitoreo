@@ -1,21 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Login - Wazuh Reports</title>
 </head>
 <body>
-    <h1>Login</h1>
-    {% if error %}
-        <p style="color: red;">{{ error }}</p>
-    {% endif %}
-    <form method="POST" action="/">
-        <label for="usuario">Usuario:</label>
-        <input type="text" name="usuario" required><br><br>
-        
-        <label for="password">Contraseña:</label>
-        <input type="password" name="password" required><br><br>
-        
+    <h1>Iniciar Sesión</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul>
+          {% for category, message in messages %}
+            <li style="color: {% if category=='error' %}red{% else %}green{% endif %};">
+              {{ message }}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <label>Usuario:</label>
+        <input type="text" name="username" required>
+
+        <label>Contraseña:</label>
+        <input type="password" name="password" required>
+
         <button type="submit">Ingresar</button>
     </form>
+
+    <p>¿No tienes cuenta? <a href="{{ url_for('register') }}">Regístrate aquí</a></p>
 </body>
 </html>

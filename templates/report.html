@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Reporte Diario Wazuh</title>
 </head>
 <body>
-    <h1>Reporte Diario</h1>
-    <p>Fecha del Reporte: {{ fecha_reporte }}</p>
-    <p>Responsable: {{ responsable }}</p>
+    <h1>Reporte Diario Wazuh</h1>
+    <p><strong>Fecha del Reporte:</strong> {{ fecha_reporte }}</p>
+    <p><strong>Responsable (usuario logueado):</strong> {{ responsable }}</p>
 
+    <hr/>
     <h2>Usuarios con Conexiones Fallidas</h2>
     {{ tablas['usuarios_fallidos']|safe }}
     <p>
@@ -15,6 +17,7 @@
       <a href="{{ url_for('export_excel', categoria='usuarios_fallidos') }}">Exportar a Excel</a>
     </p>
 
+    <hr/>
     <h2>Conexiones Fallidas por Dirección IP</h2>
     {{ tablas['ips_fallidas']|safe }}
     <p>
@@ -22,6 +25,7 @@
       <a href="{{ url_for('export_excel', categoria='ips_fallidas') }}">Exportar a Excel</a>
     </p>
 
+    <hr/>
     <h2>Bloqueos de Active Response (Usuarios)</h2>
     {{ tablas['bloqueos_usuarios']|safe }}
     <p>
@@ -29,6 +33,7 @@
       <a href="{{ url_for('export_excel', categoria='bloqueos_usuarios') }}">Exportar a Excel</a>
     </p>
 
+    <hr/>
     <h2>Bloqueos de Active Response (IPs)</h2>
     {{ tablas['bloqueos_ips']|safe }}
     <p>
@@ -36,6 +41,7 @@
       <a href="{{ url_for('export_excel', categoria='bloqueos_ips') }}">Exportar a Excel</a>
     </p>
 
+    <hr/>
     <h2>Usuarios Creados en los Servidores</h2>
     {{ tablas['usuarios_creados']|safe }}
     <p>
