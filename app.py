@@ -138,21 +138,6 @@ def load_user(user_id):
 # RUTAS DE REGISTRO/LOGIN/LOGOUT
 # -----------------------------------------------------------------------------
 
-@app.before_first_request
-def create_tables():
-    """
-    Crear las tablas en la BD si no existen. (Modo didáctico)
-    En producción usaríamos migraciones con Alembic.
-    """
-    db.create_all()
-    # Crear un usuario admin de ejemplo si no existe
-    if not User.query.filter_by(username="admin").first():
-        admin_user = User(username="admin", role="admin")
-        admin_user.set_password("admin123")
-        db.session.add(admin_user)
-        db.session.commit()
-
-
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -173,7 +158,6 @@ def register():
         flash("Usuario registrado exitosamente.", "success")
         return redirect(url_for("login"))
     return render_template("register.html")
-
 
 @app.route("/", methods=["GET", "POST"])
 def login():
@@ -543,5 +527,16 @@ def convert_query_to_df(query, categoria):
 # MAIN
 # -----------------------------------------------------------------------------
 if __name__ == "__main__":
-    # Ejecutar la app
+    with app.app_context():
+        # 1. Crear tablas
+        db.create_all()
+
+        # 2. Crear usuario admin si no existe
+        if not User.query.filter_by(username="admin").first():
+            admin_user = User(username="admin", role="admin")
+            admin_user.set_password("admin123")
+            db.session.add(admin_user)
+            db.session.commit()
+
+    # 3. Ejecutar la aplicación
     app.run(debug=True)
