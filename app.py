@@ -19,7 +19,7 @@ app = Flask(__name__)
 app.secret_key = "clave-secreta"  # Cambiar por algo más robusto en prod
 
 # Configuración de la base de datos (usar SQLite como ejemplo)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///wazuh_reports.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///wazuh_reports.sqlite"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
