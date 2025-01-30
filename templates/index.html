@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Panel Principal</title>
+</head>
+<body>
+    <h1>Bienvenido, {{ usuario }}</h1>
+    <p>Selecciona una categoría para cargar CSV:</p>
+    <ul>
+        <li><a href="{{ url_for('upload_csv', categoria='usuarios_fallidos') }}">Usuarios con Conexiones Fallidas</a></li>
+        <li><a href="{{ url_for('upload_csv', categoria='ips_fallidas') }}">Conexiones Fallidas por IP</a></li>
+        <li><a href="{{ url_for('upload_csv', categoria='bloqueos_usuarios') }}">Bloqueos de Active Response (Usuarios)</a></li>
+        <li><a href="{{ url_for('upload_csv', categoria='bloqueos_ips') }}">Bloqueos de Active Response (IPs)</a></li>
+        <li><a href="{{ url_for('upload_csv', categoria='usuarios_creados') }}">Usuarios Creados en los Servidores</a></li>
+    </ul>
+
+    <p><a href="{{ url_for('reporte') }}">Ver/Generar Reporte Final</a></p>
+</body>
+</html>

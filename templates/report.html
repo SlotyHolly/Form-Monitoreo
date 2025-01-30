@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reporte Diario Wazuh</title>
+</head>
+<body>
+    <h1>Reporte Diario</h1>
+    <p>Fecha del Reporte: {{ fecha_reporte }}</p>
+    <p>Responsable: {{ responsable }}</p>
+
+    <h2>Usuarios con Conexiones Fallidas</h2>
+    {{ tablas['usuarios_fallidos']|safe }}
+    <p>
+      <a href="{{ url_for('export_json', categoria='usuarios_fallidos') }}">Exportar a JSON</a> | 
+      <a href="{{ url_for('export_excel', categoria='usuarios_fallidos') }}">Exportar a Excel</a>
+    </p>
+
+    <h2>Conexiones Fallidas por Dirección IP</h2>
+    {{ tablas['ips_fallidas']|safe }}
+    <p>
+      <a href="{{ url_for('export_json', categoria='ips_fallidas') }}">Exportar a JSON</a> | 
+      <a href="{{ url_for('export_excel', categoria='ips_fallidas') }}">Exportar a Excel</a>
+    </p>
+
+    <h2>Bloqueos de Active Response (Usuarios)</h2>
+    {{ tablas['bloqueos_usuarios']|safe }}
+    <p>
+      <a href="{{ url_for('export_json', categoria='bloqueos_usuarios') }}">Exportar a JSON</a> | 
+      <a href="{{ url_for('export_excel', categoria='bloqueos_usuarios') }}">Exportar a Excel</a>
+    </p>
+
+    <h2>Bloqueos de Active Response (IPs)</h2>
+    {{ tablas['bloqueos_ips']|safe }}
+    <p>
+      <a href="{{ url_for('export_json', categoria='bloqueos_ips') }}">Exportar a JSON</a> | 
+      <a href="{{ url_for('export_excel', categoria='bloqueos_ips') }}">Exportar a Excel</a>
+    </p>
+
+    <h2>Usuarios Creados en los Servidores</h2>
+    {{ tablas['usuarios_creados']|safe }}
+    <p>
+      <a href="{{ url_for('export_json', categoria='usuarios_creados') }}">Exportar a JSON</a> | 
+      <a href="{{ url_for('export_excel', categoria='usuarios_creados') }}">Exportar a Excel</a>
+    </p>
+
+    <p><a href="{{ url_for('index') }}">Volver al Menú</a></p>
+</body>
+</html>
