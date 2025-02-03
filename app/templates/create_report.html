@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<body>
+    <h1>Formulario para Cargar Reportes</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+
+        <label>{{ form.failed_users_csv.label }}</label> {{ form.failed_users_csv() }} <br>
+        <label>{{ form.failed_ips_csv.label }}</label> {{ form.failed_ips_csv() }} <br>
+        <label>{{ form.blocked_users_csv.label }}</label> {{ form.blocked_users_csv() }} <br>
+        <label>{{ form.blocked_ips_csv.label }}</label> {{ form.blocked_ips_csv() }} <br>
+        <label>{{ form.users_added_csv.label }}</label> {{ form.users_added_csv(required=False) }} <br>
+
+        <button type="submit">{{ form.submit.label }}</button>
+    </form>
+    {% for field, errors in form.errors.items() %}
+    <div class="alert alert-danger">
+        <strong>Error en {{ field }}:</strong> {{ errors[0] }}
+    </div>
+{% endfor %}
+</body>
+</html>
+{% endblock %}

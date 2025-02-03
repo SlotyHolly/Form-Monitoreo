@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mt-4">Historial de Reportes</h2>
+    <div class="row">
+        {% for report in reports %}
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Reporte #{{ report.id }}</h5>
+                    <p class="card-text">Fecha: {{ report.created_at }}</p>
+                    <p class="card-text">Usuario: {{ report.user.username }}</p>
+                    <a href="{{ url_for('main.reporte', report_id=report.id) }}" class="btn btn-info">Ver Detalles</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

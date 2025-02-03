@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte Diario Wazuh - {{ report.created_at }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            color: #333;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+            color: #0056b3;
+        }
+        h2 {
+            color: #004085;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table th, 
+        table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            min-width: 200px;
+            word-wrap: break-word;
+        }
+        table th {
+            background-color: #007bff;
+            color: white;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .alert {
+            color: #d9534f;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Reporte Diario Wazuh - {{ report.created_at }}</h1>
+
+<div class="info">
+    <h2>ℹ️ Información General</h2>
+    <p><strong>Fecha:</strong> {{ report.created_at }}</p>
+    <p><strong>Usuario:</strong> {{ report.user.username }}</p>
+</div>
+
+<h2>1️⃣ Usuarios con Conexiones Fallidas</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Usuario</th>
+            <th>Servidor</th>
+            <th>Cantidad</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for connection in report.failed_connections %}
+        <tr>
+            <td>{{ connection.user }}</td>
+            <td>{{ connection.server }}</td>
+            <td>{{ connection.count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>2️⃣ Conexiones Fallidas por Dirección IP</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Dirección IP</th>
+            <th>País de la IP</th>
+            <th>Servidor</th>
+            <th>Cantidad</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ip in report.failed_ips %}
+        <tr>
+            <td>{{ ip.ip_address }}</td>
+            <td>{{ ip.country }}</td>
+            <td>{{ ip.server }}</td>
+            <td>{{ ip.count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>3️⃣ Bloqueos de Active Response</h2>
+<h3> ⚡ Bloqueos por Usuarios</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Usuario Bloqueado</th>
+            <th>Nombre del Servidor</th>
+            <th>Hora del Bloqueo</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for blocked in report.blocked_users %}
+        <tr>
+            <td>{{ blocked.user }}</td>
+            <td>{{ blocked.server }}</td>
+            <td>{{ blocked.date }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3> ⚡ Bloqueos por Dirección IP</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Dirección IP</th>
+            <th>País de la IP</th>
+            <th>Nombre del Servidor</th>
+            <th>Hora del Bloqueo</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for blocked_ip in report.blocked_ips %}
+        <tr>
+            <td>{{ blocked_ip.ip_address }}</td>
+            <td>{{ blocked_ip.country }}</td>
+            <td>{{ blocked_ip.server }}</td>
+            <td>{{ blocked_ip.date }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>5️⃣ Usuarios creados en los servidores</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Usuario</th>
+            <th>UID</th>
+            <th>Directorio</th>
+            <th>Shell</th>
+            <th>Servidor</th>
+            <th>Fecha y Hora</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in report.created_users %}
+        <tr>
+            <td>{{ user.user }}</td>
+            <td>{{ user.uid }}</td>
+            <td>{{ user.path }}</td>
+            <td>{{ user.shell }}</td>
+            <td>{{ user.server }}</td>
+            <td>{{ user.date }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>
