@@ -35,7 +35,7 @@ def index():
             return redirect(url_for('admin.dashboard'))  # Si está autenticado, va al dashboard
         else:
             return redirect(url_for('main.create_report'))  # Si está autenticado, va a la creación de reportes
-    return redirect(url_for('auth.login'))  # Si no está autenticado, va al login
+    return redirect("http://localhost:5173/")  # ✅ Ahora sí existe
 
 @main_bp.route('/history_reports')
 @login_required
@@ -62,62 +62,32 @@ def reporte(report_id):
     return render_template('report.html', report=report)
 
 
-@main_bp.route('/create_report', methods=['GET', 'POST'])
+@main_bp.route("/api/upload_report", methods=["POST"])
 @login_required
-def create_report():
-    form = UploadCSVForm()
+def upload_report():
+    """Maneja la subida de archivos CSV y los procesa en la base de datos."""
+    print(f"🔍 Usuario actual: {current_user}")
+    if "failed_users" not in request.files:
+        return jsonify({"error": "Debes subir al menos un archivo."}), 400
 
-    if request.method == "GET":
-        print("🔵 GET /create_report - No validamos el formulario en GET.")
-        return render_template('create_report.html', form=form)
+    file_paths = {}
+    for key in ["failed_users", "failed_ips", "blocked_users", "blocked_ips", "users_added"]:
+        file = request.files.get(key)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(UPLOAD_FOLDER, filename)
+            file.save(file_path)
+            file_paths[key] = file_path
 
-    print("🟢 Intentando validar el formulario...")
+    # Crear un registro en HistoryReports
+    history = HistoryReports(user_id=current_user.id)
+    db.session.add(history)
+    db.session.commit()
 
-    if form.validate_on_submit():
-        print("✅ Formulario validado correctamente.")
+    # Procesar los archivos
+    process_csvs(file_paths, history.id)
 
-        files = {
-            "failed_users": form.failed_users_csv.data,
-            "failed_ips": form.failed_ips_csv.data,
-            "blocked_users": form.blocked_users_csv.data,
-            "blocked_ips": form.blocked_ips_csv.data,
-            "users_added": form.users_added_csv.data
-        }
-
-        file_paths = {}
-        for key, file in files.items():
-            if file:  # Solo validar si el archivo realmente fue subido
-                print(f"🔍 Verificando archivo {key}: {file.filename}")
-                if allowed_file(file.filename):
-                    filename = secure_filename(file.filename)
-                    file_path = os.path.join(UPLOAD_FOLDER, filename)
-                    file.save(file_path)
-                    file_paths[key] = file_path
-                    print(f"✅ Archivo subido: {key} -> {file_path}")
-                else:
-                    print(f"❌ ERROR: Archivo {key} tiene un formato no permitido.")
-                    file_paths[key] = None  # Permitir que sea None en lugar de fallar
-            else:
-                print(f"⚠️ Archivo {key} no fue seleccionado, ignorando...")
-                file_paths[key] = None
-                
-        print(f"📂 Archivos realmente guardados y listos para procesar: {file_paths}")
-
-        if any(file_paths.values()):  # Solo procesar si hay al menos un archivo subido
-            process_csvs(file_paths, current_user.id)
-            flash('Reportes cargados exitosamente.', 'success')
-            print("✅ Reporte procesado y almacenado en la BD.")
-        else:
-            flash('No se han subido archivos válidos.', 'warning')
-            print("⚠️ No hay archivos para procesar.")
-
-        return redirect(url_for('main.create_report'))
-
-    print("❌ ERROR: Formulario no pasó la validación.")
-    print(f"🔍 Errores de validación: {form.errors}")
-    return render_template('create_report.html', form=form)
-
-
+    return jsonify({"message": "Reportes subidos y procesados correctamente."}), 200
 
 
 def process_csvs(file_paths, user_id, debug=False):
