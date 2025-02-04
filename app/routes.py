@@ -139,7 +139,7 @@ def process_csvs(file_paths, user_id, debug=False):
             if debug:
                 print(f"⚠️ ADVERTENCIA: Archivo {csv_type} no encontrado. Saltando...")
             continue
-        
+
         if not os.path.exists(file_path):
             if debug:
                 print(f"⚠️ ADVERTENCIA: Archivo {csv_type} no encontrado. Saltando...")
@@ -281,7 +281,7 @@ def process_csvs(file_paths, user_id, debug=False):
                             print(f"✅ Agregado CreatedUser: {user} - {server}")
 
         db.session.commit()  # 🔹 Se asegura de guardar todo en la BD
-        
+        delete_files(file_paths)  # 🔹 Elimina los archivos después de procesarlos
         if debug:
             print(f"📦 Registros de {csv_type} guardados en la BD")
 
@@ -289,6 +289,13 @@ def process_csvs(file_paths, user_id, debug=False):
 # Ejecutar el proceso de CSV con archivos de prueba
 # ----------------------------------------------
 """
+
+def delete_files(file_paths):
+    """Elimina los archivos CSV después de procesarlos."""
+    for file_path in file_paths.values():
+        if file_path and os.path.exists(file_path):
+            os.remove(file_path)
+            print(f"🗑️ Archivo eliminado: {file_path}")
 
 if __name__ == "__main__":
 
