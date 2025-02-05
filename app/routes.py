@@ -104,8 +104,9 @@ def create_report():
         print(f"📂 Archivos realmente guardados y listos para procesar: {file_paths}")
 
         if any(file_paths.values()):  # Solo procesar si hay al menos un archivo subido
-            process_csvs(file_paths, current_user.id)
+            process_csvs(file_paths, current_user.id, debug=True)
             flash('Reportes cargados exitosamente.', 'success')
+            delete_files(file_paths)  # 🔹 Elimina los archivos después de procesarlos
             print("✅ Reporte procesado y almacenado en la BD.")
         else:
             flash('No se han subido archivos válidos.', 'warning')
@@ -281,7 +282,6 @@ def process_csvs(file_paths, user_id, debug=False):
                             print(f"✅ Agregado CreatedUser: {user} - {server}")
 
         db.session.commit()  # 🔹 Se asegura de guardar todo en la BD
-        delete_files(file_paths)  # 🔹 Elimina los archivos después de procesarlos
         if debug:
             print(f"📦 Registros de {csv_type} guardados en la BD")
 
