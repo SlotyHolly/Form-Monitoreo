@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: flask_report_generator
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./app:/app
+      - sqlite_data:/app/instance  # Volumen para persistir SQLite en la carpeta correcta
+    environment:
+      - FLASK_APP=run.py
+      - FLASK_ENV=production
+      - SECRET_KEY=RTXJqZUjyzfWHXEeJAMfbxqvwwGALd
+    command: pm2 start /app/run.py --interpreter python3 --name Form-Monitoreo
+    restart: always
+
+volumes:
+  sqlite_data:
+    driver: local
