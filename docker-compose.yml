@@ -2,18 +2,19 @@ version: '3.8'
 
 services:
   app:
-    container_name: Form-Monitoreo
+    container_name: Form-Monitoreo  # Cambiamos el nombre del contenedor
     build: .
     ports:
       - "5000:5000"
     volumes:
       - ./app:/app
-      - sqlite_data:/app/instance  # Volumen para persistir SQLite
+      - ./run.py:/run.py  # Asegurar que run.py se copie correctamente
+      - sqlite_data:/app/instance  # Volumen para persistencia de SQLite
     environment:
-      - FLASK_APP=run.py
+      - FLASK_APP=/run.py
       - FLASK_ENV=production
-      - SECRET_KEY=RTXJqZUjyzfWHXEeJAMfbxqvwwGALd
-    command: pm2 start run.py --interpreter python3 --name Form-Monitoreo
+      - SECRET_KEY=nyrmcwznsrQHzCkTCdpPFzUubqZQBa
+    command: python3 /run.py  # Ejecutamos directamente Flask con Python
     restart: always
 
 volumes:
