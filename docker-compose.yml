@@ -13,7 +13,7 @@ services:
       - FLASK_APP=run.py
       - FLASK_ENV=production
       - SECRET_KEY=RTXJqZUjyzfWHXEeJAMfbxqvwwGALd
-    command: pm2 start /app/run.py --interpreter python3 --name Form-Monitoreo
+    command: pm2 start run.py --interpreter python3 --name Form-Monitoreo
     restart: always
 
 volumes:
