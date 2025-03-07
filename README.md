@@ -59,7 +59,7 @@ docker ps
 Dado que SQLite se encuentra en app/instance/, se debe comprobar que el volumen funciona correctamente:
 
 ```git
-docker exec -it flask_report_generator ls -lh /app/instance
+docker exec -it Form-Monitoreo ls -lh /app/instance
 ```
 
 Si todo está bien, deberías ver el archivo reports_wazuh.sqlite
