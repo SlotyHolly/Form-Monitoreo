@@ -1,5 +1,5 @@
 # Imagen base
-FROM python:3.11.9
+FROM python:3.11
 
 # Definir directorio de trabajo
 WORKDIR /app
@@ -7,15 +7,11 @@ WORKDIR /app
 # Copiar archivos del proyecto
 COPY . /app
 
-# Copiar paquetes descargados previamente
-COPY ../paquetes /app/paquetes
-COPY requirements.txt /app/
+# Instalar dependencias desde PyPI
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
-# Instalar dependencias desde la carpeta local
-RUN pip install --no-index --find-links=/app/paquetes -r requirements.txt
-
-# Instalar PM2 globalmente (si está en los paquetes descargados)
-RUN pip install --no-index --find-links=/app/paquetes pm2
+# Instalar PM2 globalmente
+RUN pip install pm2
 
 # Exponer el puerto Flask
 EXPOSE 5000
