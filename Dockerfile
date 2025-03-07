@@ -20,4 +20,4 @@ RUN npm install -g pm2
 EXPOSE 5000
 
 # Comando por defecto al iniciar el contenedor
-CMD ["pm2", "start", "/app/run.py", "--interpreter", "python3", "--name", "Form-Monitoreo"]
+CMD ["pm2", "start", "run.py", "--interpreter", "python3", "--name", "Form-Monitoreo"]
