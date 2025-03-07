@@ -1,5 +1,5 @@
 # Imagen base de Python
-FROM python:3.11
+FROM python:3.11.9
 
 # Definir directorio de trabajo
 WORKDIR /app
@@ -20,4 +20,4 @@ RUN npm install -g pm2
 EXPOSE 5000
 
 # Comando por defecto al iniciar el contenedor
-CMD ["pm2", "start", "run.py", "--interpreter", "python3", "--name", "Form-Monitoreo"]
+CMD ["python3", "/run.py"]
