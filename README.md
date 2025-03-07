@@ -32,10 +32,7 @@ Instrucciones paso a paso sobre cómo instalar y configurar el bot en un servido
 git clone --branch main --single-branch https://github.com/SlotyHolly/Form-Monitoreo.git
 cd Form-Monitoreo
 ```
-##### Construir y Levantar el Contenedor en el Servidor
-```git
-docker-compose build
-```
+### Construir y Levantar el Contenedor en el Servidor
 
 Construir la imagen desde el código clonado:
 ```git
