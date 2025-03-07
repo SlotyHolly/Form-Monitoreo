@@ -29,49 +29,46 @@ Instrucciones paso a paso sobre cómo instalar y configurar el bot en un servido
 
 ##### Clonar el repositorio:
 ```git
-git clone https://github.com/SlotyHolly/Bot-Discord.git
+git clone --branch main --single-branch https://github.com/SlotyHolly/Form-Monitoreo.git
 cd Form-Monitoreo
 ```
-##### Crea un entorno virtual e instálalo:
+##### Construir y Levantar el Contenedor en el Servidor
 ```git
-python -m venv venv
-source venv/bin/activate
-```
-### Instalación de Dependencias sin Acceso a Internet
-
-Si el servidor no tiene acceso a Internet, puedes instalar las dependencias desde un equipo con conexión siguiendo estos pasos:
-
-##### En un equipo con acceso a Internet, crea un directorio para almacenar los paquetes:
-```git
-mkdir paquetes
-pip download -r requirements.txt -d paquetes
+docker-compose build
 ```
 
-##### Copia el directorio paquetes al servidor sin acceso a Internet.
+Construir la imagen desde el código clonado:
+```git
+docker-compose build
+```
 
-##### En el servidor, instala las dependencias desde el directorio copiado:
+Levantar los contenedores en segundo plano:
 
 ```git
-pip install --no-index --find-links=paquetes -r requirements.txt
+docker-compose up -d
 ```
+Ver los logs en tiempo real:
 
-#### Configuración y Ejecución
-
-##### Ejecuta la aplicación con PM2:
 ```git
-pm2 start run.py --interpreter python3 --name Form-Monitoreo
+docker-compose logs -f
+```
+Verificar que el contenedor está corriendo:
+```git
+docker ps
 ```
 
-#####  Configuración Automática de Reinicio:
-```terminal
-pm2 startup
-```
-Después de ejecutar este comando, PM2 te proporcionará un comando que necesitas copiar y ejecutar para completar la configuración.
+### Verificar Persistencia de SQLite
 
-#####  Guardar la Lista de Procesos:
-```terminal
-pm2 save
+Dado que SQLite se encuentra en app/instance/, se debe comprobar que el volumen funciona correctamente:
+
+```git
+docker exec -it flask_report_generator ls -lh /app/instance
 ```
+
+Si todo está bien, deberías ver el archivo reports_wazuh.sqlite
+
+### Acceder a la Aplicación
+
 
 ##### Prueba el acceso a la interfaz web en http://localhost:5000
 
