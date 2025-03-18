@@ -20,11 +20,13 @@ def login():
             login_user(user)
             flash('Inicio de sesión exitoso', 'success')
 
-            # 🔹 Redirigir según el tipo de usuario
+            # 🔹 Redirigir según el rol del usuario
             if user.role == 'admin':
                 return redirect(url_for('admin.dashboard'))
+            elif user.role == 'visualizacion':
+                return redirect(url_for('main.history_reports'))  # 👈 Redirige solo al historial
             else:
-                return redirect(url_for('main.create_report'))  # 👈 Redirige a create_report
+                return redirect(url_for('main.create_report'))
 
         else:
             flash('Usuario o contraseña incorrectos', 'danger')

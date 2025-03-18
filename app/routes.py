@@ -41,7 +41,7 @@ def index():
 @login_required
 def history_reports():
     """Muestra los reportes creados por el usuario (o todos si es admin)."""
-    if current_user.role == 'admin':
+    if current_user.role == 'admin' or current_user.role == 'visualizacion':
         reports = HistoryReports.query.order_by(HistoryReports.created_at.desc()).all()
     else:
         reports = HistoryReports.query.filter_by(user_id=current_user.id).order_by(HistoryReports.created_at.desc()).all()

@@ -11,7 +11,11 @@ class CreateUserForm(FlaskForm):
     username = StringField('Usuario', validators=[DataRequired(), Length(min=4, max=50)])
     password = PasswordField('Contraseña', validators=[DataRequired(), Length(min=6)])
     confirm_password = PasswordField('Confirmar Contraseña', validators=[DataRequired(), EqualTo('password')])
-    role = SelectField('Rol', choices=[('user', 'Usuario'), ('admin', 'Administrador')], validators=[DataRequired()])
+    role = SelectField('Rol', choices=[
+        ('user', 'Usuario'),
+        ('admin', 'Administrador'),
+        ('visualizacion', 'Visualización')  # 👈 Agregamos la opción "Visualización"
+    ], validators=[DataRequired()])
     submit = SubmitField('Crear Usuario')
     
 class ChangePasswordForm(FlaskForm):
