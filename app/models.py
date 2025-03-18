@@ -1,6 +1,9 @@
-from datetime import date
+from datetime import datetime, timedelta
 from flask_login import UserMixin
 from . import db  # asumiendo que tu __init__.py hace db = SQLAlchemy()
+
+def utc_minus_3():
+    return datetime.utcnow() - timedelta(hours=3)
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -21,7 +24,7 @@ class HistoryReports(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    created_at = db.Column(db.DateTime, default=utc_minus_3, nullable=False)
 
     # Relación inversa con User
     user = db.relationship('User', back_populates='history_reports')
