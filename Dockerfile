@@ -4,14 +4,21 @@ FROM python:3.11.9
 # Definir directorio de trabajo
 WORKDIR /app
 
-# Copiar archivos del proyecto
-COPY . /app
+# Copiar solo la carpeta `app/` dentro de `/app/`
+COPY app /app/
 
-# Instalar dependencias desde PyPI
-RUN pip install --no-cache-dir -r /app/requirements.txt
+# Copiar `run.py` en la raíz del contenedor
+COPY run.py /run.py
+
+# Copiar `requirements.txt`
+COPY requirements.txt /requirements.txt
+
+# Instalar dependencias desde `requirements.txt`
+RUN pip install --no-cache-dir -r /requirements.txt
 
 # Exponer el puerto Flask
 EXPOSE 5000
 
-# Comando por defecto al iniciar el contenedor
+# Ejecutar `run.py` desde la raíz
 CMD ["python3", "/run.py"]
+
