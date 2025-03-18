@@ -14,6 +14,13 @@ class CreateUserForm(FlaskForm):
     role = SelectField('Rol', choices=[('user', 'Usuario'), ('admin', 'Administrador')], validators=[DataRequired()])
     submit = SubmitField('Crear Usuario')
 
+class ChangePasswordForm(FlaskForm):
+    new_password = PasswordField('Nueva Contraseña', validators=[DataRequired(), Length(min=6)])
+    submit = SubmitField('Cambiar Contraseña')
+
+class DeleteUserForm(FlaskForm):
+    submit = SubmitField('Eliminar Usuario')
+
 class ReportForm(FlaskForm):
     # Campos generales del reporte
     user_id = IntegerField('ID de Usuario', validators=[DataRequired()])

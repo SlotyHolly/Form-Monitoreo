@@ -119,8 +119,6 @@ def create_report():
     return render_template('create_report.html', form=form)
 
 
-
-
 def process_csvs(file_paths, user_id, debug=False):
     """Procesa los 5 archivos CSV y guarda los datos en la base de datos."""
     print(f"📂 Abriendo archivo: {file_paths}")

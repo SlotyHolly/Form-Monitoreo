@@ -4,29 +4,53 @@
 <body>
     <h1>Dashboard de Administración</h1>
 
+    <!-- Crear Nuevo Usuario -->
     <h2>Crear Nuevo Usuario</h2>
     <form method="POST">
-        <label>Usuario:</label>
-        <input type="text" name="username" required>
+        {{ create_user_form.hidden_tag() }}
+        <label>{{ create_user_form.username.label }}</label>
+        {{ create_user_form.username }}
         <br>
-        <label>Contraseña:</label>
-        <input type="password" name="password" required>
+
+        <label>{{ create_user_form.password.label }}</label>
+        {{ create_user_form.password }}
         <br>
-        <label>Rol:</label>
-        <select name="role" required>
-            <option value="user">Usuario</option>
-            <option value="admin">Administrador</option>
-        </select>
+
+        <label>{{ create_user_form.confirm_password.label }}</label>
+        {{ create_user_form.confirm_password }}
         <br>
-        <button type="submit">Crear Usuario</button>
+
+        <label>{{ create_user_form.role.label }}</label>
+        {{ create_user_form.role }}
+        <br>
+
+        {{ create_user_form.submit }}
     </form>
 
+    <!-- Lista de Usuarios con opciones para Cambiar Contraseña y Eliminar -->
     <h2>Usuarios Registrados</h2>
     <ul>
         {% for user in users %}
-        <li>{{ user.username }} - Rol: {{ user.role }}</li>
+        <li>
+            {{ user.username }} - Rol: {{ user.role }}
+
+            <!-- Formulario para Cambiar Contraseña -->
+            <form method="POST" action="{{ url_for('admin.change_password', user_id=user.id) }}">
+                {{ change_password_form.hidden_tag() }}
+                <label>{{ change_password_form.new_password.label }}</label>
+                {{ change_password_form.new_password }}
+                {{ change_password_form.submit }}
+            </form>
+
+            <!-- Botón para Eliminar Usuario -->
+            <form method="POST" action="{{ url_for('admin.delete_user', user_id=user.id) }}">
+                {{ delete_user_form.hidden_tag() }}
+                {{ delete_user_form.submit }}
+            </form>
+        </li>
         {% endfor %}
     </ul>
+
 </body>
 </html>
 {% endblock %}
