@@ -121,3 +121,55 @@
       color: #d9534f;
       font-weight: bold;
   }
+
+/* Contenedor del formulario */
+.form-container {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    margin: auto;
+}
+
+/* Etiquetas */
+label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Campos de entrada */
+.form-control {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+/* Botón de envío */
+.btn {
+    background-color: #0056b3;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.btn:hover {
+    background-color: #004085;
+}
+
+/* Mensajes de error */
+.alert {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+}

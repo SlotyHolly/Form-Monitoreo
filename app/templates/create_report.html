@@ -2,23 +2,48 @@
 
 {% block content %}
 <body>
-    <h1>Formulario para Cargar Reportes</h1>
-    <form method="POST" enctype="multipart/form-data">
-        {{ form.hidden_tag() }}
+    <div class="container mt-5">
+        <h1 class="text-center text-primary">Formulario para Cargar Reportes</h1>
 
-        <label>{{ form.failed_users_csv.label }}</label> {{ form.failed_users_csv() }} <br>
-        <label>{{ form.failed_ips_csv.label }}</label> {{ form.failed_ips_csv() }} <br>
-        <label>{{ form.blocked_users_csv.label }}</label> {{ form.blocked_users_csv() }} <br>
-        <label>{{ form.blocked_ips_csv.label }}</label> {{ form.blocked_ips_csv() }} <br>
-        <label>{{ form.users_added_csv.label }}</label> {{ form.users_added_csv(required=False) }} <br>
+        <div class="card shadow p-4">
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
 
-        <button type="submit">{{ form.submit.label }}</button>
-    </form>
-    {% for field, errors in form.errors.items() %}
-    <div class="alert alert-danger">
-        <strong>Error en {{ field }}:</strong> {{ errors[0] }}
+                <div class="mb-3">
+                    <label class="form-label">{{ form.failed_users_csv.label }}</label>
+                    {{ form.failed_users_csv(class="form-control") }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">{{ form.failed_ips_csv.label }}</label>
+                    {{ form.failed_ips_csv(class="form-control") }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">{{ form.blocked_users_csv.label }}</label>
+                    {{ form.blocked_users_csv(class="form-control") }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">{{ form.blocked_ips_csv.label }}</label>
+                    {{ form.blocked_ips_csv(class="form-control") }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">{{ form.users_added_csv.label }}</label>
+                    {{ form.users_added_csv(class="form-control", required=False) }}
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">📤 Subir Reporte</button>
+            </form>
+
+            {% for field, errors in form.errors.items() %}
+            <div class="alert alert-danger mt-3">
+                <strong>⚠ Error en {{ field }}:</strong> {{ errors[0] }}
+            </div>
+            {% endfor %}
+        </div>
     </div>
-{% endfor %}
 </body>
 </html>
 {% endblock %}
