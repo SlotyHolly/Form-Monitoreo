@@ -6,24 +6,26 @@
 
     <!-- Crear Nuevo Usuario -->
     <h2>Crear Nuevo Usuario</h2>
-    <form method="POST">
+    <h2>Crear Nuevo Usuario</h2>
+    <form method="POST" action="{{ url_for('admin.dashboard') }}">
         {{ create_user_form.hidden_tag() }}
+    
         <label>{{ create_user_form.username.label }}</label>
         {{ create_user_form.username }}
         <br>
-
+    
         <label>{{ create_user_form.password.label }}</label>
         {{ create_user_form.password }}
         <br>
-
+    
         <label>{{ create_user_form.confirm_password.label }}</label>
         {{ create_user_form.confirm_password }}
         <br>
-
+    
         <label>{{ create_user_form.role.label }}</label>
         {{ create_user_form.role }}
         <br>
-
+    
         {{ create_user_form.submit }}
     </form>
 

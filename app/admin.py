@@ -19,11 +19,12 @@ def dashboard():
     change_password_form = ChangePasswordForm()
     delete_user_form = DeleteUserForm()
 
-    # Manejar la creación de usuario con Flask-WTF
     if create_user_form.validate_on_submit():
         username = create_user_form.username.data
         password = create_user_form.password.data
         role = create_user_form.role.data
+
+        print(f"[DEBUG] Recibido: Usuario={username}, Role={role}")
 
         if User.query.filter_by(username=username).first():
             flash('El nombre de usuario ya está en uso.', 'danger')
@@ -36,8 +37,11 @@ def dashboard():
 
         flash(f'Usuario {username} creado exitosamente.', 'success')
         return redirect(url_for('admin.dashboard'))
+    else:
+        print("[DEBUG] Error en la validación del formulario")
+        print(create_user_form.errors)
 
-    return render_template('dashboard_admin.html', 
+    return render_template('dashboard.html', 
                            users=users, 
                            create_user_form=create_user_form,
                            change_password_form=change_password_form,

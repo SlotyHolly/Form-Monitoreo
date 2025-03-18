@@ -13,7 +13,7 @@ class CreateUserForm(FlaskForm):
     confirm_password = PasswordField('Confirmar Contraseña', validators=[DataRequired(), EqualTo('password')])
     role = SelectField('Rol', choices=[('user', 'Usuario'), ('admin', 'Administrador')], validators=[DataRequired()])
     submit = SubmitField('Crear Usuario')
-
+    
 class ChangePasswordForm(FlaskForm):
     new_password = PasswordField('Nueva Contraseña', validators=[DataRequired(), Length(min=6)])
     submit = SubmitField('Cambiar Contraseña')
