@@ -2,57 +2,67 @@
 
 {% block content %}
 <body>
-    <h1>Dashboard de Administración</h1>
+    <div class="container mt-5">
+        <h1 class="text-center text-primary">Dashboard de Administración</h1>
 
-    <!-- Crear Nuevo Usuario -->
-    <h2>Crear Nuevo Usuario</h2>
-    <h2>Crear Nuevo Usuario</h2>
-    <form method="POST" action="{{ url_for('admin.dashboard') }}">
-        {{ create_user_form.hidden_tag() }}
-    
-        <label>{{ create_user_form.username.label }}</label>
-        {{ create_user_form.username }}
-        <br>
-    
-        <label>{{ create_user_form.password.label }}</label>
-        {{ create_user_form.password }}
-        <br>
-    
-        <label>{{ create_user_form.confirm_password.label }}</label>
-        {{ create_user_form.confirm_password }}
-        <br>
-    
-        <label>{{ create_user_form.role.label }}</label>
-        {{ create_user_form.role }}
-        <br>
-    
-        {{ create_user_form.submit }}
-    </form>
+        <!-- Crear Nuevo Usuario -->
+        <div class="card shadow p-4 mt-4">
+            <h2 class="text-secondary text-center">Crear Nuevo Usuario</h2>
+            <form method="POST" action="{{ url_for('admin.dashboard') }}">
+                {{ create_user_form.hidden_tag() }}
 
-    <!-- Lista de Usuarios con opciones para Cambiar Contraseña y Eliminar -->
-    <h2>Usuarios Registrados</h2>
-    <ul>
-        {% for user in users %}
-        <li>
-            {{ user.username }} - Rol: {{ user.role }}
+                <div class="mb-3">
+                    <label class="form-label">{{ create_user_form.username.label }}</label>
+                    {{ create_user_form.username(class="form-control") }}
+                </div>
 
-            <!-- Formulario para Cambiar Contraseña -->
-            <form method="POST" action="{{ url_for('admin.change_password', user_id=user.id) }}">
-                {{ change_password_form.hidden_tag() }}
-                <label>{{ change_password_form.new_password.label }}</label>
-                {{ change_password_form.new_password }}
-                {{ change_password_form.submit }}
+                <div class="mb-3">
+                    <label class="form-label">{{ create_user_form.password.label }}</label>
+                    {{ create_user_form.password(class="form-control") }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">{{ create_user_form.confirm_password.label }}</label>
+                    {{ create_user_form.confirm_password(class="form-control") }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">{{ create_user_form.role.label }}</label>
+                    {{ create_user_form.role(class="form-select") }}
+                </div>
+
+                <button type="submit" class="btn btn-success w-100">➕ Crear Usuario</button>
             </form>
+        </div>
 
-            <!-- Botón para Eliminar Usuario -->
-            <form method="POST" action="{{ url_for('admin.delete_user', user_id=user.id) }}">
-                {{ delete_user_form.hidden_tag() }}
-                {{ delete_user_form.submit }}
-            </form>
-        </li>
-        {% endfor %}
-    </ul>
+        <!-- Lista de Usuarios con opciones para Cambiar Contraseña y Eliminar -->
+        <div class="card shadow p-4 mt-4">
+            <h2 class="text-secondary text-center">Usuarios Registrados</h2>
+            <ul class="list-group">
+                {% for user in users %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span><strong>{{ user.username }}</strong> - Rol: {{ user.role }}</span>
 
+                    <div class="d-flex gap-2">
+                        <!-- Formulario para Cambiar Contraseña -->
+                        <form method="POST" action="{{ url_for('admin.change_password', user_id=user.id) }}" class="d-flex">
+                            {{ change_password_form.hidden_tag() }}
+                            <input type="password" name="new_password" placeholder="Nueva contraseña" class="form-control me-2" required>
+                            <button type="submit" class="btn btn-warning">🔑 Cambiar</button>
+                        </form>
+
+                        <!-- Botón para Eliminar Usuario -->
+                        <form method="POST" action="{{ url_for('admin.delete_user', user_id=user.id) }}">
+                            {{ delete_user_form.hidden_tag() }}
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de eliminar a {{ user.username }}?')">🗑 Eliminar</button>
+                        </form>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
 </body>
 </html>
 {% endblock %}
