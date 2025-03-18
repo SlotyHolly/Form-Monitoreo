@@ -24,7 +24,7 @@ class HistoryReports(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    created_at = db.Column(db.DateTime, default=utc_minus_3, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False)
 
     # Relación inversa con User
     user = db.relationship('User', back_populates='history_reports')

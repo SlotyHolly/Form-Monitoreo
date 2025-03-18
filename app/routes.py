@@ -8,6 +8,8 @@ from flask import request
 from werkzeug.utils import secure_filename
 from .forms import UploadCSVForm
 import os
+from datetime import datetime, timedelta
+
 
 # Crear un Blueprint para las rutas principales
 main_bp = Blueprint('main', __name__)
@@ -76,6 +78,17 @@ def create_report():
     if form.validate_on_submit():
         print("✅ Formulario validado correctamente.")
 
+        # 🔹 Asegurar que `report_date` siempre tenga un valor
+        if current_user.role == "admin":
+            report_date = form.report_date.data  # Mantenerlo como `date`
+            report_date = datetime.combine(report_date, datetime.utcnow().time())  # Convertir a `datetime`
+        else:
+            report_date = datetime.utcnow() - timedelta(hours=3)  # UTC-3
+
+        # 🔹 Redondear a minutos eliminando segundos y microsegundos
+        report_date = report_date.replace(second=0, microsecond=0)
+        print(f"📅 Fecha de reporte: {report_date}")
+
         files = {
             "failed_users": form.failed_users_csv.data,
             "failed_ips": form.failed_ips_csv.data,
@@ -104,8 +117,9 @@ def create_report():
         print(f"📂 Archivos realmente guardados y listos para procesar: {file_paths}")
 
         if any(file_paths.values()):  # Solo procesar si hay al menos un archivo subido
-            process_csvs(file_paths, current_user.id, debug=True)
-            flash('Reportes cargados exitosamente.', 'success')
+            # 🔹 Ahora pasamos `report_date` SIEMPRE, sin importar si es admin o no
+            process_csvs(file_paths, current_user.id, report_date)
+            flash(f'Reportes del {report_date.strftime("%Y-%m-%d %H:%M")} cargados exitosamente.', 'success')
             delete_files(file_paths)  # 🔹 Elimina los archivos después de procesarlos
             print("✅ Reporte procesado y almacenado en la BD.")
         else:
@@ -114,15 +128,16 @@ def create_report():
 
         return redirect(url_for('main.create_report'))
 
+
     print("❌ ERROR: Formulario no pasó la validación.")
     print(f"🔍 Errores de validación: {form.errors}")
     return render_template('create_report.html', form=form)
 
 
-def process_csvs(file_paths, user_id, debug=False):
+def process_csvs(file_paths, user_id, report_date=None, debug=False):
     """Procesa los 5 archivos CSV y guarda los datos en la base de datos."""
     print(f"📂 Abriendo archivo: {file_paths}")
-    history = HistoryReports(user_id=user_id)
+    history = HistoryReports(user_id=user_id, created_at=report_date)
     db.session.add(history)
     db.session.commit()
 

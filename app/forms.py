@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectField, FileField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField, SelectField, FileField, IntegerField, DateField
 from wtforms.validators import DataRequired, Length, EqualTo, ValidationError, Optional
+
 
 class LoginForm(FlaskForm):
     username = StringField('Usuario', validators=[DataRequired(), Length(min=4, max=50)])  # 👈 Asegúrate de que sea `username`
@@ -30,6 +31,8 @@ class ReportForm(FlaskForm):
     user_id = IntegerField('ID de Usuario', validators=[DataRequired()])
     title = StringField('Título del Reporte', validators=[DataRequired(), Length(min=5, max=100)])
     
+    report_date = DateField('Fecha del Reporte', format='%Y-%m-%d', validators=[Optional()])
+
     # Datos de eventos de seguridad
     failed_user = StringField('Usuario con Fallos de Conexión')
     failed_server = StringField('Servidor con Fallos de Conexión')
@@ -55,4 +58,6 @@ class UploadCSVForm(FlaskForm):
     blocked_users_csv = FileField('Lista de Usuarios Bloqueados', validators=[Optional()])
     blocked_ips_csv = FileField('Lista de IPs Bloqueadas', validators=[Optional()])
     users_added_csv = FileField('Lista de Usuarios Agregados', validators=[Optional()])  # ✅ Ahora es opcional
+    report_date = DateField('Fecha del Reporte', format='%Y-%m-%d', validators=[Optional()])
     submit = SubmitField('Cargar Reportes')
+

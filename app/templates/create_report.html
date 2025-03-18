@@ -9,6 +9,13 @@
             <form method="POST" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
 
+                {% if current_user.role == 'admin' %}
+                <div class="mb-3">
+                    <label class="form-label">{{ form.report_date.label }}</label>
+                    {{ form.report_date(class="form-control", type="date") }}
+                </div>
+                {% endif %}
+
                 <div class="mb-3">
                     <label class="form-label">{{ form.failed_users_csv.label }}</label>
                     {{ form.failed_users_csv(class="form-control") }}
