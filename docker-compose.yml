@@ -3,6 +3,7 @@ version: '3.8'
 services:
   app:
     container_name: Form-Monitoreo  # Cambiamos el nombre del contenedor
+    image: slotyholly/form-monitoreo:latest
     build: .
     ports:
       - "5000:5000"
@@ -16,6 +17,14 @@ services:
       - SECRET_KEY=nyrmcwznsrQHzCkTCdpPFzUubqZQBa
     command: python3 /run.py  # Ejecutamos directamente Flask con Python
     restart: always
+
+  watchtower:  # 🔹 Mover Watchtower al mismo nivel que "app"
+    container_name: Watchtower
+    image: containrrr/watchtower
+    restart: always  # 🔹 Se reinicia si se cae
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 3600 Form-Monitoreo  # 🔹 Solo monitorea `Form-Monitoreo`
 
 volumes:
   sqlite_data:
