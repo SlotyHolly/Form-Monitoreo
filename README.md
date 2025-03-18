@@ -27,53 +27,31 @@ Instrucciones paso a paso sobre cómo instalar y configurar el bot en un servido
 
 ### Pasos de Instalación
 
-##### Clonar el repositorio:
+##### Descargar la Última Versión de la Imagen:
 ```git
-git clone --branch main --single-branch https://github.com/SlotyHolly/Form-Monitoreo.git
-cd Form-Monitoreo
+docker pull slotyholly/form-monitoreo:latest
 ```
-### Construir y Levantar el Contenedor en el Servidor
-
-Construir la imagen desde el código clonado:
+##### Verifica que la imagen se descargó correctamente:
 ```git
-docker-compose build
+docker images
 ```
 
-Levantar los contenedores en segundo plano:
+##### Iniciar el Contenedor con docker-compose:
 
 ```git
 docker-compose up -d
 ```
-Ver los logs en tiempo real:
-
-```git
-docker-compose logs -f
-```
-Verificar que el contenedor está corriendo:
-```git
-docker ps
-```
-
-### Verificar Persistencia de SQLite
-
-Dado que SQLite se encuentra en app/instance/, se debe comprobar que el volumen funciona correctamente:
-
-```git
-docker exec -it Form-Monitoreo ls -lh /app/instance
-```
-
-Si todo está bien, deberías ver el archivo reports_wazuh.sqlite
 
 ### Acceder a la Aplicación
 
-
 ##### Prueba el acceso a la interfaz web en http://localhost:5000
-
 
 ## Contacto
 
 SlotyHolly - [@SlotyHolly](https://twitter.com/SlotyHolly)
 
 Discord - [Discord](https://discord.gg/SlotyHolly)
+
+Docker Hub - [Docker Hub](https://hub.docker.com/u/slotyholly)
 
 Link del Proyecto: [https://github.com/SlotyHolly/Bot-Musica-Discord.git](https://github.com/SlotyHolly/Form-Monitoreo)
