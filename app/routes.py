@@ -80,8 +80,11 @@ def create_report():
 
         # 🔹 Asegurar que `report_date` siempre tenga un valor
         if current_user.role == "admin":
-            report_date = form.report_date.data  # Mantenerlo como `date`
-            report_date = datetime.combine(report_date, datetime.utcnow().time())  # Convertir a `datetime`
+            if report_date is None:
+                report_date = datetime.utcnow() - timedelta(hours=3)
+            else:
+                report_date = form.report_date.data  # Mantenerlo como `date`
+                report_date = datetime.combine(report_date, datetime.utcnow().time())  # Convertir a `datetime`
         else:
             report_date = datetime.utcnow() - timedelta(hours=3)  # UTC-3
 
