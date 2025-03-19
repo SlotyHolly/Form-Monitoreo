@@ -16,11 +16,11 @@ COPY requirements.txt /requirements.txt
 # Instalar dependencias desde `requirements.txt`
 RUN pip install --no-cache-dir -r /requirements.txt
 
-# Establecer la variable de entorno `PYTHONPATH` para que Python reconozca `app/`
+# Establecer `PYTHONPATH` para que Python reconozca `app/`
 ENV PYTHONPATH=/app
 
 # Exponer el puerto Flask
 EXPOSE 5000
 
-# Ejecutar `run.py` desde la raíz del contenedor
+# Ejecutar `run.py` desde la raíz
 CMD ["python3", "/run.py"]
