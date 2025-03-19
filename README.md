@@ -35,6 +35,43 @@ docker pull slotyholly/form-monitoreo:latest
 ```git
 docker images
 ```
+##### Crear el docker-compose.yml con la siguiente estructura:
+```git
+nano docker-compose.yml
+```
+
+```git
+version: '3.8'
+
+services:
+  app:
+    container_name: Form-Monitoreo
+    image: slotyholly/form-monitoreo:latest
+    build: .  
+    ports:
+      - "5000:5000"
+    volumes:
+      - sqlite_data:/app/instance 
+    environment:
+      - FLASK_APP=/run.py
+      - FLASK_ENV=production
+      - SECRET_KEY=nyrmcwznsrQHzCkTCdpPFzUubqZQBa
+    command: python3 /run.py  
+    restart: always
+
+  watchtower:
+    container_name: Watchtower
+    image: containrrr/watchtower
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 3600 Form-Monitoreo  
+
+volumes:
+  sqlite_data:
+    driver: local
+
+```
 
 ##### Iniciar el Contenedor con docker-compose:
 
