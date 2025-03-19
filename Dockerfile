@@ -1,5 +1,5 @@
-# Imagen base de Python
-FROM python:3.11.9
+# Imagen base de Python con menos paquetes innecesarios
+FROM python:3.11.11-slim
 
 # Definir directorio de trabajo
 WORKDIR /app
@@ -10,11 +10,16 @@ COPY app /app/
 # Copiar `run.py` en la raíz del contenedor
 COPY run.py /run.py
 
+# Instalar paquetes del sistema necesarios y actualizar dependencias de seguridad
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
+    libpq-dev gcc && rm -rf /var/lib/apt/lists/*
+
 # Copiar `requirements.txt`
 COPY requirements.txt /requirements.txt
 
-# Instalar dependencias desde `requirements.txt`
-RUN pip install --no-cache-dir -r /requirements.txt
+# Instalar dependencias en un solo paso optimizado
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r /requirements.txt
 
 # Establecer `PYTHONPATH` para que Python reconozca `app/`
 ENV PYTHONPATH=/app
