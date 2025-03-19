@@ -3,28 +3,26 @@ version: '3.8'
 services:
   app:
     container_name: Form-Monitoreo  # Cambiamos el nombre del contenedor
-    image: slotyholly/form-monitoreo:latest
-    build: .
+    image: slotyholly/form-monitoreo:latest  # Usa la imagen desde Docker Hub
+    build: .  # Solo necesario si quieres construir la imagen localmente
     ports:
       - "5000:5000"
     volumes:
-      - ./app:/app
-      - ./run.py:/run.py  # Asegurar que run.py se copie correctamente
       - sqlite_data:/app/instance  # Volumen para persistencia de SQLite
     environment:
-      - FLASK_APP=/run.py
+      - FLASK_APP=/app/run.py  # Asegurar la ruta correcta
       - FLASK_ENV=production
       - SECRET_KEY=nyrmcwznsrQHzCkTCdpPFzUubqZQBa
-    command: python3 /run.py  # Ejecutamos directamente Flask con Python
+    command: python3 /app/run.py  # Ejecutamos directamente Flask con Python
     restart: always
 
-  watchtower:  # 🔹 Mover Watchtower al mismo nivel que "app"
+  watchtower:
     container_name: Watchtower
     image: containrrr/watchtower
-    restart: always  # 🔹 Se reinicia si se cae
+    restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: --interval 3600 Form-Monitoreo  # 🔹 Solo monitorea `Form-Monitoreo`
+    command: --interval 3600 Form-Monitoreo  # Solo monitorea `Form-Monitoreo`
 
 volumes:
   sqlite_data:
