@@ -1,5 +1,5 @@
 # Imagen base de Python con menos paquetes innecesarios
-FROM python:3.11.11-slim
+FROM python:3.13.2-slim
 
 # Definir directorio de trabajo
 WORKDIR /app
