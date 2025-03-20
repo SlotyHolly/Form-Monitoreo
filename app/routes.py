@@ -118,7 +118,7 @@ def create_report():
 
         if any(file_paths.values()):  # Solo procesar si hay al menos un archivo subido
             # 🔹 Ahora pasamos `report_date` SIEMPRE, sin importar si es admin o no
-            process_csvs(file_paths, current_user.id, report_date)
+            process_csvs(file_paths, current_user, report_date)
             flash(f'Reportes del {report_date.strftime("%Y-%m-%d %H:%M")} cargados exitosamente.', 'success')
             delete_files(file_paths)  # 🔹 Elimina los archivos después de procesarlos
             print("✅ Reporte procesado y almacenado en la BD.")
@@ -134,10 +134,10 @@ def create_report():
     return render_template('create_report.html', form=form)
 
 
-def process_csvs(file_paths, user_id, report_date=None, debug=False):
+def process_csvs(file_paths, current_user, report_date=None, debug=False):
     """Procesa los 5 archivos CSV y guarda los datos en la base de datos."""
     print(f"📂 Abriendo archivo: {file_paths}")
-    history = HistoryReports(user_id=user_id, created_at=report_date)
+    history = HistoryReports(user_id=current_user.id, name=current_user.name, created_at=report_date)
     db.session.add(history)
     db.session.commit()
 
@@ -206,7 +206,6 @@ def process_csvs(file_paths, user_id, report_date=None, debug=False):
                         
                         if debug:
                             print(f"✅ Agregado FailedConnection: {user} en {server}, Intentos: {count}")
-
 
             elif csv_type == "failed_ips":
                 for row in rows:

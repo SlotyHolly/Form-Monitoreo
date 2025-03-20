@@ -44,13 +44,14 @@ def create_admin_user():
     from .models import User
 
     admin_username = "admin"
+    admin_name = "Administrador"
     admin_hashed_password = "scrypt:32768:8:1$N70q7zbhlYwgpHWd$8f8346400eb23548f1c82bbc8a281511ff677bf486988fa91b35ada48bff6582f0c172d9b791b2394e3836a9e9a187c836fb90bcb972e6645a77253f3c100b02"
     admin_role = "admin"
 
     # Verificar si ya existe un usuario admin
     admin = User.query.filter_by(username=admin_username).first()
     if not admin:
-        admin = User(username=admin_username, password=admin_hashed_password, role=admin_role)
+        admin = User(username=admin_username, name=admin_name, password=admin_hashed_password, role=admin_role)
         db.session.add(admin)
         db.session.commit()
         print("✅ Usuario admin creado correctamente.")

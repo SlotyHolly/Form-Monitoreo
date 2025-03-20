@@ -23,6 +23,11 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('main.history_reports') }}">Historial</a>
                         </li>
+                        {% if current_user.role == 'admin' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+                        </li>
+                        {% endif %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('auth.logout') }}">Cerrar Sesión</a>
                         </li>

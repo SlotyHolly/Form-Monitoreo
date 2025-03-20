@@ -10,6 +10,7 @@ class LoginForm(FlaskForm):
 
 class CreateUserForm(FlaskForm):
     username = StringField('Usuario', validators=[DataRequired(), Length(min=4, max=50)])
+    name = StringField('Nombre', validators=[DataRequired(), Length(min=4, max=100)])
     password = PasswordField('Contraseña', validators=[DataRequired(), Length(min=6)])
     confirm_password = PasswordField('Confirmar Contraseña', validators=[DataRequired(), EqualTo('password')])
     role = SelectField('Rol', choices=[

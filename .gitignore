@@ -1,5 +1,6 @@
 # ignoramos todo el contenido de la carpeta venv
 venv/
+app/migrate_db.py
 app/__pycache__/*
 venv
 venv/*

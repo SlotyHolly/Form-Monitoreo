@@ -21,6 +21,7 @@ def dashboard():
 
     if create_user_form.validate_on_submit():
         username = create_user_form.username.data
+        name = create_user_form.name.data
         password = create_user_form.password.data
         role = create_user_form.role.data
 
@@ -31,7 +32,7 @@ def dashboard():
             return redirect(url_for('admin.dashboard'))
 
         hashed_password = generate_password_hash(password)
-        new_user = User(username=username, password=hashed_password, role=role)
+        new_user = User(username=username, name=name ,password=hashed_password, role=role)
         db.session.add(new_user)
         db.session.commit()
 
@@ -79,8 +80,15 @@ def delete_user(user_id):
     if form.validate_on_submit():
         user = User.query.get(user_id)
         if user:
+            
+            # 🔹 Primero, desvincular los reportes para que no queden huérfanos
+            HistoryReports.query.filter_by(user_id=user.id).update({'user_id': None})
+            db.session.commit()
+
+
             db.session.delete(user)
             db.session.commit()
+
             flash(f'Usuario {user.username} eliminado correctamente.', 'success')
 
     return redirect(url_for('admin.dashboard'))

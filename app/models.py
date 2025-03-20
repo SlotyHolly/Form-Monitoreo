@@ -10,6 +10,7 @@ class User(db.Model, UserMixin):
     
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(128), nullable=False)
     role = db.Column(db.String(50), nullable=False)
 
@@ -17,13 +18,14 @@ class User(db.Model, UserMixin):
     history_reports = db.relationship('HistoryReports', back_populates='user')
 
     def __repr__(self):
-        return f'<User {self.userName}>'
+        return f'<User {self.username} - {self.name}>'
 
 class HistoryReports(db.Model):
     __tablename__ = 'history_reports'
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="SET NULL"), nullable=True)
+    name = db.Column(db.String(100), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False)
 
     # Relación inversa con User
@@ -42,7 +44,7 @@ class HistoryReports(db.Model):
     blocked_ips = db.relationship('BlockedIp', back_populates='history', cascade="all, delete-orphan")
 
     def __repr__(self):
-        return f'<HistoryReports {self.id} - user_id={self.user_id}>'
+        return f'<HistoryReports {self.id} - user_id={self.user_id} - name={self.name}>'
 
 class QueueReports(db.Model):
     __tablename__ = 'queue_reports'
