@@ -298,17 +298,17 @@ def process_csvs(file_paths, user_id, report_date=None, debug=False):
         if debug:
             print(f"📦 Registros de {csv_type} guardados en la BD")
 
-"""" ----------------------------------------------
-# Ejecutar el proceso de CSV con archivos de prueba
-# ----------------------------------------------
-"""
-
 def delete_files(file_paths):
     """Elimina los archivos CSV después de procesarlos."""
     for file_path in file_paths.values():
         if file_path and os.path.exists(file_path):
             os.remove(file_path)
             print(f"🗑️ Archivo eliminado: {file_path}")
+
+"""" ----------------------------------------------
+# Ejecutar el proceso de CSV con archivos de prueba
+# ----------------------------------------------
+"""
 
 if __name__ == "__main__":
 
