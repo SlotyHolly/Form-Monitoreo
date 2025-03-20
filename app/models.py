@@ -35,11 +35,11 @@ class HistoryReports(db.Model):
       # Si esperas varios records en la cola por cada history_report, omites uselist=False
 
     # Relaciones a las demás tablas que apuntan a id_history
-    failed_connections = db.relationship('FailedConnection', back_populates='history')
-    failed_ips = db.relationship('FailedIp', back_populates='history')
-    created_users = db.relationship('CreatedUser', back_populates='history')
-    blocked_users = db.relationship('BlockedUsers', back_populates='history')
-    blocked_ips = db.relationship('BlockedIp', back_populates='history')
+    failed_connections = db.relationship('FailedConnection', back_populates='history', cascade="all, delete-orphan")
+    failed_ips = db.relationship('FailedIp', back_populates='history', cascade="all, delete-orphan")
+    created_users = db.relationship('CreatedUser', back_populates='history', cascade="all, delete-orphan")
+    blocked_users = db.relationship('BlockedUsers', back_populates='history', cascade="all, delete-orphan")
+    blocked_ips = db.relationship('BlockedIp', back_populates='history', cascade="all, delete-orphan")
 
     def __repr__(self):
         return f'<HistoryReports {self.id} - user_id={self.user_id}>'

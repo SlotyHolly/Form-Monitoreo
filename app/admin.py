@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
-from .models import User
+from .models import User, HistoryReports
 from . import db
 from .forms import CreateUserForm, ChangePasswordForm, DeleteUserForm
 
@@ -39,6 +39,7 @@ def dashboard():
         return redirect(url_for('admin.dashboard'))
     else:
         print("[DEBUG] Error en la validación del formulario")
+
         print(create_user_form.errors)
 
     return render_template('dashboard.html', 
@@ -81,5 +82,23 @@ def delete_user(user_id):
             db.session.delete(user)
             db.session.commit()
             flash(f'Usuario {user.username} eliminado correctamente.', 'success')
+
+    return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/delete_report/<int:report_id>')
+@login_required
+def delete_report(report_id):
+    if current_user.role != 'admin':
+        flash('Acceso denegado.', 'danger')
+        return redirect(url_for('main.history_reports'))
+
+    report = HistoryReports.query.get(report_id)
+
+    if report:
+        db.session.delete(report)
+        db.session.commit()
+        flash(f'Reporte {report.id} eliminado correctamente.', 'success')
+    else:
+        flash('El reporte no existe.', 'danger')
 
     return redirect(url_for('admin.dashboard'))
