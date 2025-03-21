@@ -57,7 +57,7 @@ def reporte(report_id):
     report = HistoryReports.query.get_or_404(report_id)
 
     # Verificación de permisos: Un usuario normal solo puede ver sus reportes
-    if current_user.role != 'admin' and report.user_id != current_user.id:
+    if (current_user.role != 'admin' or current_user.role != 'visualizacion') and report.user_id != current_user.id:
         flash("No tienes permiso para ver este reporte.", "danger")
         return redirect(url_for('main.history_reports'))
 
