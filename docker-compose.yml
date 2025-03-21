@@ -4,8 +4,6 @@ services:
   form-monitoreo:
     container_name: Form-Monitoreo
     image: slotyholly/form-monitoreo:latest
-    ports:
-      - "5000:5000"
     volumes:
       - sqlite_data:/app/instance
     environment:
@@ -14,6 +12,17 @@ services:
       - SECRET_KEY=nyrmcwznsrQHzCkTCdpPFzUubqZQBa
     command: gunicorn -w 4 -b 0.0.0.0:5000 run:app
     restart: always
+
+  nginx:
+    image: nginx:stable
+    container_name: nginx-proxy
+    ports:
+      - "5000:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - form-monitoreo
 
 volumes:
   sqlite_data:

@@ -2,6 +2,7 @@
 venv/
 app/migrate_db.py
 app/__pycache__/*
+nginx/
 venv
 venv/*
 venv/Lib/site-packages/flask_wtf/form.py

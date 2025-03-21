@@ -27,15 +27,15 @@ Instrucciones paso a paso sobre cómo instalar y configurar el bot en un servido
 
 ### Pasos de Instalación
 
-##### Descargar la Última Versión de la Imagen:
+#### Descargar la Última Versión de la Imagen:
 ```git
 docker pull slotyholly/form-monitoreo:latest
 ```
-##### Verifica que la imagen se descargó correctamente:
+#### Verifica que la imagen se descargó correctamente:
 ```git
 docker images
 ```
-##### Crear el docker-compose.yml con la siguiente estructura:
+#### Crear el docker-compose.yml con la siguiente estructura:
 ```git
 nano docker-compose.yml
 ```
@@ -47,8 +47,6 @@ services:
   form-monitoreo:
     container_name: Form-Monitoreo
     image: slotyholly/form-monitoreo:latest
-    ports:
-      - "5000:5000"
     volumes:
       - sqlite_data:/app/instance
     environment:
@@ -58,13 +56,50 @@ services:
     command: gunicorn -w 4 -b 0.0.0.0:5000 run:app
     restart: always
 
+  nginx:
+    image: nginx:stable
+    container_name: nginx-proxy
+    ports:
+      - "5000:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - form-monitoreo
+
 volumes:
   sqlite_data:
     driver: local
 
 ```
 
-##### Iniciar el Contenedor con docker-compose:
+#### Crear los certificados para HTTPS:
+
+##### PowerShell:
+
+```git
+mkdir -p nginx/ssl
+```
+
+```git
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout nginx/ssl/key.pem -out nginx/ssl/cert.pem -subj "/CN=form-monitoreo.local"
+```
+
+##### Bash:
+
+```git
+mkdir -p nginx/ssl
+```
+
+```git
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout nginx/ssl/key.pem \
+  -out nginx/ssl/cert.pem \
+  -subj "/CN=form-monitoreo.local"
+
+```
+
+#### Iniciar el Contenedor con docker-compose:
 
 ```git
 docker-compose up -d
