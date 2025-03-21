@@ -7,6 +7,8 @@ WORKDIR /app
 # Copiar la carpeta `app/` dentro del contenedor
 COPY app /app/
 
+COPY nginx /nginx/
+
 # Copiar `run.py` en la raíz del contenedor
 COPY run.py /run.py
 
