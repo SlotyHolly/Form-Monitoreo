@@ -56,12 +56,14 @@ def reporte(report_id):
     """Muestra la información detallada de un reporte."""
     report = HistoryReports.query.get_or_404(report_id)
 
-    # Verificación de permisos: Un usuario normal solo puede ver sus reportes
-    if (current_user.role != 'admin' or current_user.role != 'visualizacion') and report.user_id != current_user.id:
+    # Verificación de permisos: admin y visualización pueden ver todos los reportes,
+    # los usuarios comunes solo los suyos
+    if current_user.role not in ['admin', 'visualizacion'] and report.user_id != current_user.id:
         flash("No tienes permiso para ver este reporte.", "danger")
         return redirect(url_for('main.history_reports'))
 
     return render_template('report.html', report=report)
+
 
 
 @main_bp.route('/create_report', methods=['GET', 'POST'])
