@@ -305,34 +305,3 @@ def delete_files(file_paths):
         if file_path and os.path.exists(file_path):
             os.remove(file_path)
             print(f"🗑️ Archivo eliminado: {file_path}")
-
-"""" ----------------------------------------------
-# Ejecutar el proceso de CSV con archivos de prueba
-# ----------------------------------------------
-"""
-
-if __name__ == "__main__":
-
-    def get_csv_files(folder_path):
-        """Devuelve un diccionario con las rutas de los archivos CSV esperados."""
-        return {
-            "failed_users": os.path.join(folder_path, "List_Users_Failed.csv"),
-            "failed_ips": os.path.join(folder_path, "List_IP_Failed.csv"),
-            "blocked_users": os.path.join(folder_path, "List_Users_Blocked.csv"),
-            "blocked_ips": os.path.join(folder_path, "List_IPS_Blocked.csv"),
-            "users_added": os.path.join(folder_path, "List_User_Sudo_Add.csv")
-        }
-
-    CSV_FOLDER_PATH = "E:\Form-Monitoreo\CSV"
-    app = create_app()
-    
-    with app.app_context():
-        print("\n🚀 **EJECUTANDO TEST DE PROCESO CSV** 🚀\n")
-
-        # Simulación de archivos CSV en E:\Form-Monitoreo\CSV
-        csv_files = get_csv_files(CSV_FOLDER_PATH)
-
-        # Llamar a `process_csvs()` con los archivos de prueba
-        process_csvs(csv_files, user_id=1, debug=True)
-
-        print("\n✅ **PROCESO DE CSV TERMINADO** ✅")

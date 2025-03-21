@@ -22,10 +22,10 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r /requirements.txt
 
 # Establecer `PYTHONPATH` para que Python reconozca `app/`
-ENV PYTHONPATH=/app
+ENV PYTHONPATH=/:/app
 
 # Exponer el puerto Flask
 EXPOSE 5000
 
 # Ejecutar `run.py` desde la raíz
-CMD ["python3", "/run.py"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "run:app"]
