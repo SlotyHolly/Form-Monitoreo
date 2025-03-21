@@ -78,23 +78,23 @@ volumes:
 ##### PowerShell:
 
 ```git
-mkdir -p nginx/ssl
+mkdir -p app/nginx/ssl
 ```
 
 ```git
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout nginx/ssl/key.pem -out nginx/ssl/cert.pem -subj "/CN=form-monitoreo.local"
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout app/nginx/ssl/key.pem -out app/nginx/ssl/cert.pem -subj "/CN=form-monitoreo.local"
 ```
 
 ##### Bash:
 
 ```git
-mkdir -p nginx/ssl
+mkdir -p app/nginx/ssl
 ```
 
 ```git
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-  -keyout nginx/ssl/key.pem \
-  -out nginx/ssl/cert.pem \
+  -keyout app/nginx/ssl/key.pem \
+  -out app/nginx/ssl/cert.pem \
   -subj "/CN=form-monitoreo.local"
 
 ```
