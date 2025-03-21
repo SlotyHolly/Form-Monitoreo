@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from werkzeug.security import generate_password_hash
 from .config import Config
+import os
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -10,6 +11,14 @@ login_manager = LoginManager()
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+
+    # Leer versión desde archivo
+    version_path = os.path.join(os.path.dirname(__file__), '..', 'VERSION')
+    try:
+        with open(version_path, 'r') as f:
+            app.config['APP_VERSION'] = f.read().strip()
+    except FileNotFoundError:
+        app.config['APP_VERSION'] = 'desconocida'
 
     db.init_app(app)
     login_manager.init_app(app)
@@ -36,9 +45,13 @@ def create_app():
         db.create_all()
         create_admin_user()
 
+    @app.context_processor
+    def inject_version():
+        return dict(app_version=app.config['APP_VERSION'])
+
     return app
 
-
+    
 def create_admin_user():
     """Crea un usuario admin por defecto si no existe"""
     from .models import User
