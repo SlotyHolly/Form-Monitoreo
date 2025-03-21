@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 # Crear un Blueprint para las rutas principales
 main_bp = Blueprint('main', __name__)
 
-UPLOAD_FOLDER = os.path.join(os.getcwd(), 'app' ,'instance', 'uploads')  # 👈 Define la ruta completa
+UPLOAD_FOLDER = os.path.join(os.getcwd(), 'app' , 'uploads')  # 👈 Define la ruta completa
 ALLOWED_EXTENSIONS = {"csv"}
 
 if not os.path.exists(UPLOAD_FOLDER):
