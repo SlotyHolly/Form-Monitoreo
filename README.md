@@ -44,28 +44,19 @@ nano docker-compose.yml
 version: '3.8'
 
 services:
-  app:
+  form-monitoreo:
     container_name: Form-Monitoreo
     image: slotyholly/form-monitoreo:latest
-    build: .  
     ports:
       - "5000:5000"
     volumes:
-      - sqlite_data:/app/instance 
+      - sqlite_data:/app/instance
     environment:
       - FLASK_APP=/run.py
       - FLASK_ENV=production
       - SECRET_KEY=nyrmcwznsrQHzCkTCdpPFzUubqZQBa
-    command: python3 /run.py  
+    command: gunicorn -w 4 -b 0.0.0.0:5000 run:app
     restart: always
-
-  watchtower:
-    container_name: Watchtower
-    image: containrrr/watchtower
-    restart: always
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: --interval 3600 Form-Monitoreo  
 
 volumes:
   sqlite_data:
