@@ -1,7 +1,0 @@
-# ignoramos todo el contenido de la carpeta venv
-venv/
-app/__pycache__/*
-nginx/
-venv
-venv/*
-app/instance/reports_wazuh.sqlite
