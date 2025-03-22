@@ -1,15 +1,16 @@
-from flask import Blueprint, jsonify, render_template, redirect, url_for, flash
+from flask import Blueprint, jsonify, render_template, redirect, url_for, flash, request, flash
 from .models import User, HistoryReports, FailedConnection, FailedIp, CreatedUser, BlockedUsers, BlockedIp
+from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import login_required, current_user
 from .forms import ReportForm
 from . import db, create_app
 import csv
-from flask import request 
+from flask import request, session
 from werkzeug.utils import secure_filename
 from .forms import UploadCSVForm
 import os
 from datetime import datetime, timedelta
-
+import re
 
 # Crear un Blueprint para las rutas principales
 main_bp = Blueprint('main', __name__)
@@ -22,10 +23,8 @@ if not os.path.exists(UPLOAD_FOLDER):
 
 def allowed_file(filename):
     if not filename:
-        print("⚠️ No hay nombre de archivo, ignorando validación.")
         return False
     extension = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
-    print(f"🔍 Verificando formato de archivo: {filename} (Extensión detectada: {extension})")
     return extension in ALLOWED_EXTENSIONS
 
 
@@ -53,18 +52,17 @@ def history_reports():
 @main_bp.route('/report/<int:report_id>')
 @login_required
 def reporte(report_id):
-    """Muestra la información detallada de un reporte."""
     report = HistoryReports.query.get_or_404(report_id)
 
-    # Verificación de permisos: admin y visualización pueden ver todos los reportes,
-    # los usuarios comunes solo los suyos
     if current_user.role not in ['admin', 'visualizacion'] and report.user_id != current_user.id:
-        flash("No tienes permiso para ver este reporte.", "danger")
+        session['swal'] = {
+                        "title": "Acceso denegado",
+                        "text": "No tenés permiso para acceder a este reporte.",
+                        "icon": "error"
+                    }
         return redirect(url_for('main.history_reports'))
-
+    
     return render_template('report.html', report=report)
-
-
 
 @main_bp.route('/create_report', methods=['GET', 'POST'])
 @login_required
@@ -72,13 +70,9 @@ def create_report():
     form = UploadCSVForm()
 
     if request.method == "GET":
-        print("🔵 GET /create_report - No validamos el formulario en GET.")
         return render_template('create_report.html', form=form)
 
-    print("🟢 Intentando validar el formulario...")
-
     if form.validate_on_submit():
-        print("✅ Formulario validado correctamente.")
 
         # 🔹 Asegurar que `report_date` siempre tenga un valor
         if current_user.role == "admin":
@@ -89,7 +83,6 @@ def create_report():
 
         # 🔹 Redondear a minutos eliminando segundos y microsegundos
         report_date = report_date.replace(second=0, microsecond=0)
-        print(f"📅 Fecha de reporte: {report_date}")
 
         files = {
             "failed_users": form.failed_users_csv.data,
@@ -102,31 +95,30 @@ def create_report():
         file_paths = {}
         for key, file in files.items():
             if file:  # Solo validar si el archivo realmente fue subido
-                print(f"🔍 Verificando archivo {key}: {file.filename}")
                 if allowed_file(file.filename):
                     filename = secure_filename(file.filename)
                     file_path = os.path.join(UPLOAD_FOLDER, filename)
                     file.save(file_path)
                     file_paths[key] = file_path
-                    print(f"✅ Archivo subido: {key} -> {file_path}")
                 else:
-                    print(f"❌ ERROR: Archivo {key} tiene un formato no permitido.")
-                    file_paths[key] = None  # Permitir que sea None en lugar de fallar
+                    file_paths[key] = None 
             else:
-                print(f"⚠️ Archivo {key} no fue seleccionado, ignorando...")
                 file_paths[key] = None
-                
-        print(f"📂 Archivos realmente guardados y listos para procesar: {file_paths}")
 
-        if any(file_paths.values()):  # Solo procesar si hay al menos un archivo subido
-            # 🔹 Ahora pasamos `report_date` SIEMPRE, sin importar si es admin o no
+        if any(file_paths.values()):
             process_csvs(file_paths, current_user, report_date)
-            flash(f'Reportes del {report_date.strftime("%Y-%m-%d %H:%M")} cargados exitosamente.', 'success')
+            session['swal'] = {
+                                "title": "Reporte generado",
+                                "text": "El informe fue creado correctamente y está disponible en el historial.",
+                                "icon": "success"
+                            }
             delete_files(file_paths)  # 🔹 Elimina los archivos después de procesarlos
-            print("✅ Reporte procesado y almacenado en la BD.")
         else:
-            flash('No se han subido archivos válidos.', 'warning')
-            print("⚠️ No hay archivos para procesar.")
+            session['swal'] = {
+                                "title": "Error al cargar",
+                                "text": "Uno o más archivos cargados no tienen el formato permitido.",
+                                "icon": "warning"
+                            }
 
         return redirect(url_for('main.create_report'))
 
@@ -135,6 +127,49 @@ def create_report():
     print(f"🔍 Errores de validación: {form.errors}")
     return render_template('create_report.html', form=form)
 
+@main_bp.route('/change_password', methods=['GET'])
+@login_required
+def perfil():
+    return render_template('change_password.html')
+
+@main_bp.route('/change_password', methods=['POST'])
+@login_required
+def change_password():
+    current_pwd = request.form.get('current_password')
+    new_pwd = request.form.get('new_password')
+    confirm_pwd = request.form.get('confirm_password')
+
+    # Verifica campos vacíos
+    if not all([current_pwd, new_pwd, confirm_pwd]):
+        flash("Todos los campos son obligatorios.", "warning")
+        return redirect(url_for('main.change_password'))
+
+    # Verifica contraseña actual
+    if not check_password_hash(current_user.password, current_pwd):
+        flash("La contraseña actual es incorrecta.", "danger")
+        return redirect(url_for('main.change_password'))
+
+    # Verifica coincidencia
+    if new_pwd != confirm_pwd:
+        flash("Las nuevas contraseñas no coinciden.", "warning")
+        return redirect(url_for('main.change_password'))
+
+    # Verifica fortaleza
+    error_msg = validar_password_segura(new_pwd)
+    if error_msg:
+        flash(error_msg, "warning")
+        return redirect(url_for('main.change_password'))
+
+    # Actualiza
+    current_user.password = generate_password_hash(new_pwd)
+    db.session.commit()
+
+    session['swal'] = {
+                        "title": "Contraseña actualizada",
+                        "text": "Se aplicaron los cambios correctamente.",
+                        "icon": "success"
+}
+    return redirect(url_for('main.create_report'))
 
 def process_csvs(file_paths, current_user, report_date=None, debug=False):
     """Procesa los 5 archivos CSV y guarda los datos en la base de datos."""
@@ -298,6 +333,20 @@ def process_csvs(file_paths, current_user, report_date=None, debug=False):
         db.session.commit()  # 🔹 Se asegura de guardar todo en la BD
         if debug:
             print(f"📦 Registros de {csv_type} guardados en la BD")
+
+def validar_password_segura(password: str) -> str | None:
+    """Valida si la contraseña cumple con los requisitos mínimos. Devuelve un mensaje si falla, None si es válida."""
+    if len(password) < 8:
+        return "La contraseña debe tener al menos 8 caracteres."
+    if not re.search(r"[A-Z]", password):
+        return "La contraseña debe contener al menos una letra mayúscula."
+    if not re.search(r"[a-z]", password):
+        return "La contraseña debe contener al menos una letra minúscula."
+    if not re.search(r"\d", password):
+        return "La contraseña debe contener al menos un número."
+    if not re.search(r"[!@#$%^&*()_+=\[{\]};:<>|./?,-]", password):
+        return "La contraseña debe contener al menos un carácter especial."
+    return None
 
 def delete_files(file_paths):
     """Elimina los archivos CSV después de procesarlos."""

@@ -41,6 +41,10 @@ def create_app():
     app.register_blueprint(auth_bp, url_prefix='/auth')  # 🔹 Aseguramos que las rutas de auth tienen el prefijo '/auth'
     app.register_blueprint(admin_bp, url_prefix='/admin')
 
+    print("🔍 Ruta de la base de datos:", app.config["SQLALCHEMY_DATABASE_URI"])
+    print("📁 Existe carpeta?", os.path.exists(os.path.dirname(app.config["SQLALCHEMY_DATABASE_URI"].replace("sqlite:///", ""))))
+
+
     with app.app_context():
         db.create_all()
         create_admin_user()

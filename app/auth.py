@@ -18,7 +18,6 @@ def login():
         user = User.query.filter_by(username=form.username.data).first()  # 👈 Usamos `username` en vez de `email`
         if user and check_password_hash(user.password, form.password.data):
             login_user(user)
-            flash('Inicio de sesión exitoso', 'success')
 
             # 🔹 Redirigir según el rol del usuario
             if user.role == 'admin':

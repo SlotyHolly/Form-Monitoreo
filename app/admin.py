@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, session
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
 from .models import User, HistoryReports
@@ -11,7 +11,11 @@ admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 @login_required
 def dashboard():
     if current_user.role != 'admin':
-        flash('Acceso denegado: No eres administrador.', 'danger')
+        session['swal'] = {
+                            "title": "Acceso denegado",
+                            "text": "No tenés permiso para acceder a esta sección.",
+                            "icon": "error"
+                        }
         return redirect(url_for('auth.login'))
 
     users = User.query.all()
@@ -28,7 +32,11 @@ def dashboard():
         print(f"[DEBUG] Recibido: Usuario={username}, Role={role}")
 
         if User.query.filter_by(username=username).first():
-            flash('El nombre de usuario ya está en uso.', 'danger')
+            session['swal'] = {
+                                "title": "Usuario en uso",
+                                "text": "El nombre de usuario ya está en uso.",
+                                "icon": "warning"
+                            }
             return redirect(url_for('admin.dashboard'))
 
         hashed_password = generate_password_hash(password)
@@ -36,13 +44,13 @@ def dashboard():
         db.session.add(new_user)
         db.session.commit()
 
-        flash(f'Usuario {username} creado exitosamente.', 'success')
+        session['swal'] = {
+                            "title": "Usuario creado",
+                            "text": f"Usuario {username} creado exitosamente.",
+                            "icon": "success"
+                        }
         return redirect(url_for('admin.dashboard'))
-    else:
-        print("[DEBUG] Error en la validación del formulario")
-
-        print(create_user_form.errors)
-
+    
     return render_template('dashboard.html', 
                            users=users, 
                            create_user_form=create_user_form,
@@ -54,7 +62,11 @@ def dashboard():
 @login_required
 def change_password(user_id):
     if current_user.role != 'admin':
-        flash('Acceso denegado.', 'danger')
+        session['swal'] = {
+                    "title": "Acceso denegado",
+                    "text": "No tenés permiso para cambiar la contraseña de otros usuarios.",
+                    "icon": "error"
+                }
         return redirect(url_for('auth.login'))
 
     form = ChangePasswordForm()
@@ -64,8 +76,11 @@ def change_password(user_id):
             new_password = form.new_password.data
             user.password = generate_password_hash(new_password)
             db.session.commit()
-            flash(f'Contraseña de {user.username} actualizada.', 'success')
-
+            session['swal'] = {
+                "title": "Contraseña actualizada",
+                "text": f"La contraseña del usuario {user.username} fue guardada correctamente.",
+                "icon": "success"
+            }
     return redirect(url_for('admin.dashboard'))
 
 # Ruta para eliminar un usuario
@@ -73,7 +88,11 @@ def change_password(user_id):
 @login_required
 def delete_user(user_id):
     if current_user.role != 'admin':
-        flash('Acceso denegado.', 'danger')
+        session['swal'] = {
+                            "title": "Acceso denegado",
+                            "text": "No tenés permiso para acceder a esta sección.",
+                            "icon": "error"
+                        }
         return redirect(url_for('auth.login'))
 
     form = DeleteUserForm()
@@ -89,7 +108,11 @@ def delete_user(user_id):
             db.session.delete(user)
             db.session.commit()
 
-            flash(f'Usuario {user.username} eliminado correctamente.', 'success')
+            session['swal'] = {
+                "title": "Usuario eliminado",
+                "text": f"El usuario {user.username} fue eliminado exitosamente.",
+                "icon": "success"
+            }
 
     return redirect(url_for('admin.dashboard'))
 
@@ -97,7 +120,11 @@ def delete_user(user_id):
 @login_required
 def delete_report(report_id):
     if current_user.role != 'admin':
-        flash('Acceso denegado.', 'danger')
+        session['swal'] = {
+                            "title": "Acceso denegado",
+                            "text": "No tenés permiso para eliminar reportes.",
+                            "icon": "error"
+                        }
         return redirect(url_for('main.history_reports'))
 
     report = HistoryReports.query.get(report_id)
@@ -105,8 +132,15 @@ def delete_report(report_id):
     if report:
         db.session.delete(report)
         db.session.commit()
-        flash(f'Reporte {report.id} eliminado correctamente.', 'success')
+        session['swal'] = {
+                            "title": "Reporte eliminado",
+                            "text": f"Reporte {report.id} eliminado correctamente.",
+                            "icon": "success"
+                        }
     else:
-        flash('El reporte no existe.', 'danger')
-
+        session['swal'] = {
+                            "title": "Reporte inexistente",
+                            "text": f"El reporte {report.id} no existe.",
+                            "icon": "error"
+                        }
     return redirect(url_for('admin.dashboard'))

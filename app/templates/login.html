@@ -27,14 +27,30 @@
 
                 <div class="mb-3">
                     <label class="form-label">Contraseña:</label>
-                    {{ form.password(class="form-control") }}
-                </div>
-
+                    <div class="input-group">
+                      {{ form.password(class="form-control", id="login_password") }}
+                      <button class="btn btn-outline-secondary toggle-password" type="button" data-target="login_password">
+                        👁️
+                      </button>
+                    </div>
+                  </div>
+                  
                 <button type="submit" class="btn btn-primary w-100">🔑 Iniciar Sesión</button>
             </form>
 
         </div>
     </div>
+    <script>
+        document.querySelectorAll('.toggle-password').forEach(button => {
+          button.addEventListener('click', () => {
+            const targetId = button.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            const isPassword = input.getAttribute('type') === 'password';
+            input.setAttribute('type', isPassword ? 'text' : 'password');
+            button.textContent = isPassword ? '🙈' : '👁️';
+          });
+        });
+      </script>      
 </body>
 </html>
 {% endblock %}

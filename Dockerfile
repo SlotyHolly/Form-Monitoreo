@@ -7,10 +7,10 @@ WORKDIR /app
 # Copiar la carpeta `app/` dentro del contenedor
 COPY app /app/
 
-COPY nginx /nginx/
-
 # Copiar `run.py` en la raíz del contenedor
 COPY run.py /run.py
+
+COPY VERSION /VERSION
 
 # Instalar paquetes del sistema necesarios y actualizar dependencias de seguridad
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
