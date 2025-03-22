@@ -5,3 +5,7 @@ nginx/
 venv
 venv/*
 app/instance/reports_wazuh.sqlite
+.dockerignore
+dockerfile.nginx
+dockerfile
+.gitignore

@@ -53,6 +53,7 @@ services:
       - FLASK_APP=/run.py
       - FLASK_ENV=production
       - SECRET_KEY=nyrmcwznsrQHzCkTCdpPFzUubqZQBa
+      - ENVIRONMENT=docker
     command: gunicorn -w 4 -b 0.0.0.0:5000 run:app
     restart: always
 
