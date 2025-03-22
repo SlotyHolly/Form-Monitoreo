@@ -4,8 +4,8 @@ app/__pycache__/*
 nginx/
 venv
 venv/*
-app/instance/reports_wazuh.sqlite
 .dockerignore
 dockerfile.nginx
 dockerfile
 .gitignore
+instance/reports_wazuh.sqlite
